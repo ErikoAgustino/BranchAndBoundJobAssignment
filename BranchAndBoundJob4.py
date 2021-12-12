@@ -9,6 +9,9 @@ class Node:
         for x in range(n):
             self.assigned[x] = assigned[x]
 
+        if(parent != None):
+            self.cost += parent.getCost()
+
         if(job > -1):
             self.setAssignedValue(True, job)
 
@@ -57,7 +60,8 @@ class Node:
 def Main():
     n = 4
     costMatrix = [[9, 2, 7, 8], [6, 4, 3, 7], [5, 8, 1, 8], [7, 6, 9, 4]]
-
+    #costMatrix = [[1, 2, 3, 4], [2, 1, 3, 4], [3, 2, 1, 4], [4, 3, 2, 1]]
+    # costMatrix = [[10, 12, 19, 11], [5, 10, 7, 8],[12, 14, 13, 11], [8, 15, 11, 9]]
     assignedArr = [False] * n
 
     childArr = []
@@ -70,8 +74,8 @@ def Main():
         childArr.append(child)
 
     lenInput = 1
-    for x in range(1, n+1, 1):
-        lenInput *= x
+    for x in range(n-1):
+        lenInput *= n
 
     for i in range(lenInput):
         temp = childArr[i]
@@ -82,8 +86,15 @@ def Main():
                 ) + 1, x, costMatrix[temp.getWorker() + 1][x], temp.getAssigned(), temp)
                 childArr.append(child)
 
+    tempMinChild = Node(n, -1, -1, 2147483647, assignedArr, None)
     for x in range(len(childArr)):
-        childArr[x].PrintOut()
+        if(childArr[x].getAssigned() == [True, True, True, True]):
+            if(tempMinChild.getCost() > childArr[x].getCost()):
+                tempMinChild = childArr[x]
+
+    while(tempMinChild != None):
+        tempMinChild.PrintOut()
+        tempMinChild = tempMinChild.getParent()
 
 
 Main()
